@@ -31,75 +31,107 @@
 
     <!-- 預算類別列表 -->
     <div class="mb-5">
-      <div class="bg-white rounded-lg p-4 mb-2.5 shadow-md">
-        <div class="flex justify-between items-center">
-          <span class="font-bold">Monthly</span>
-          <span class="text-gray-600">$200 / $1,000</span>
-          <i class="pi pi-eye text-lg"></i>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg p-4 mb-2.5 shadow-md">
-        <div class="flex justify-between items-center">
-          <span class="font-bold">Yearly</span>
-          <span class="text-gray-600">$200 / $1,000</span>
-          <i class="pi pi-eye text-lg"></i>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg p-4 mb-2.5 shadow-md">
-        <div class="flex justify-between items-center">
-          <span class="font-bold">Goals</span>
-          <span class="text-gray-600">$200 / $1,000</span>
-          <i class="pi pi-eye text-lg"></i>
-        </div>
-      </div>
+      <BudgetAccordionItem v-for="(category, index) in budgetCategories" :key="index" :title="category.title"
+        :amount="category.amount" :total="category.total" :items="category.items" :is-editing="isEditing"
+        @edit="handleEditBudget" @delete="handleDeleteBudget" />
     </div>
 
     <!-- 底部按鈕組 -->
     <div class="grid grid-cols-3 gap-2.5 mb-5">
-      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined>
+      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined
+        @click="showAddBudgetModal = true">
         <i class="pi pi-plus text-lg"></i>
         <span>新增預算</span>
       </Button>
-      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined>
+      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined
+        @click="showAddGroupModal = true">
         <i class="pi pi-file text-lg"></i>
         <span>新增目標群組</span>
       </Button>
-      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined>
+      <Button class="w-full flex flex-col items-center gap-1 p-2.5 bg-gray-50 border-none rounded-lg" outlined
+        @click="toggleEditing">
         <i class="pi pi-pencil text-lg"></i>
-        <span>編輯列表資訊</span>
+        <span>{{ isEditing ? '儲存編輯內容' : '編輯列表資訊' }}</span>
       </Button>
     </div>
 
-    <!-- 底部導航欄 -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white flex justify-around p-2.5 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
-      <div class="flex flex-col items-center text-sm text-[#f4a261]">
-        <i class="pi pi-credit-card text-lg"></i>
-        <span>Account</span>
-      </div>
-      <div class="flex flex-col items-center text-sm text-gray-600">
-        <i class="pi pi-chart-bar text-lg"></i>
-        <span>Budgets</span>
-      </div>
-      <div class="flex flex-col items-center -mt-7">
-        <div
-          class="w-[50px] h-[50px] bg-[#f4a261] rounded-full flex items-center justify-center text-white text-2xl shadow-md">
-          <i class="pi pi-plus"></i>
-        </div>
-      </div>
-      <div class="flex flex-col items-center text-sm text-gray-600">
-        <i class="pi pi-calendar text-lg"></i>
-        <span>Scheduled</span>
-      </div>
-      <div class="flex flex-col items-center text-sm text-gray-600">
-        <i class="pi pi-chart-pie text-lg"></i>
-        <span>Reports</span>
-      </div>
-    </div>
+    <!-- 使用新的底部導航欄組件 -->
+    <BottomNavBar current-route="Account" />
+
+    <!-- 新增預算彈出視窗 -->
+    <AddBudgetModal v-model:visible="showAddBudgetModal" @save="handleSaveBudget" />
+
+    <!-- 新增群組彈出視窗 -->
+    <AddGroupModal v-model:visible="showAddGroupModal" @save="handleSaveGroup" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import Button from 'primevue/button';
+import BottomNavBar from '~/components/BottomNavBar.vue';
+import AddBudgetModal from '~/components/AddBudgetModal.vue';
+import AddGroupModal from '~/components/AddGroupModal.vue';
+import BudgetAccordionItem from '~/components/BudgetAccordionItem.vue';
+
+const showAddBudgetModal = ref(false);
+const showAddGroupModal = ref(false);
+const isEditing = ref(false);
+
+// 定義預設值
+const budgetInitialData = {
+  name: '每月生活費',
+  amount: 30000,
+  group: { name: '生活費用' },
+  icon: { name: '餐飲', icon: 'pi-shopping-cart' },
+  isRecurring: true,
+  frequency: 1,
+  period: { name: '每月' }
+};
+
+const budgetCategories = ref([
+  {
+    title: 'Monthly',
+    amount: '$200',
+    total: '$1,000',
+    items: [
+      { id: 1, name: '食物', amount: '$500' },
+      { id: 2, name: '交通', amount: '$300' }
+    ]
+  },
+  {
+    title: 'Yearly',
+    amount: '$200',
+    total: '$1,000',
+    items: [
+      { id: 3, name: '保險', amount: '$1200' },
+      { id: 4, name: '稅金', amount: '$2000' }
+    ]
+  },
+  // ... 其他類別
+]);
+
+const handleSaveBudget = (budgetData) => {
+  console.log('儲存預算:', budgetData);
+  // 這裡處理儲存預算的邏輯
+};
+
+const handleEditBudget = (item) => {
+  // 處理編輯邏輯
+  console.log('Edit budget:', item);
+};
+
+const handleDeleteBudget = (item) => {
+  // 處理刪除邏輯
+  console.log('Delete budget:', item);
+};
+
+const toggleEditing = () => {
+  isEditing.value = !isEditing.value;
+};
+
+const handleSaveGroup = (groupData) => {
+  console.log('儲存群組:', groupData);
+  // 這裡處理儲存群組的邏輯
+};
 </script>

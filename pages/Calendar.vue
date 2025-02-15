@@ -1,5 +1,20 @@
 <template>
-    <div>
-        <h1>Calendar</h1>
+    <div class="p-5 bg-gray-100 min-h-screen relative pb-20">
+        <!-- 頂部標題區 -->
+        <div class="bg-[#FFE4C4] -mx-5 -mt-5 mb-5 p-5">
+            <h1 class="m-0 text-gray-800 text-xl">日曆</h1>
+        </div>
+
+        <!-- 日曆內容 -->
+        <div class="mb-20">
+            <!-- 這裡放日曆相關內容 -->
+        </div>
+
+        <!-- 底部導航欄 -->
+        <BottomNavBar current-route="Calendar" />
     </div>
 </template>
+
+<script setup>
+import BottomNavBar from '~/components/BottomNavBar.vue';
+</script>
