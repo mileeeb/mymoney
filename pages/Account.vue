@@ -78,6 +78,8 @@ const showAddBudgetModal = ref(false);
 const showAddGroupModal = ref(false);
 const isEditing = ref(false);
 
+
+
 // 定義預設值
 const budgetInitialData = {
   name: '每月生活費',
@@ -110,6 +112,8 @@ const budgetCategories = ref([
   },
   // ... 其他類別
 ]);
+
+budgetCategories.title
 
 const handleSaveBudget = (budgetData) => {
   console.log('儲存預算:', budgetData);
